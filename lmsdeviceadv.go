@@ -2,7 +2,7 @@ package limedrv
 
 import (
 	"fmt"
-	"github.com/racerxdl/limedrv/limewrap"
+	"github.com/myriadrf/limedrv/limewrap"
 )
 
 // LMSDeviceAdvanced is a dummy structure just to separated the methods considered for "Advanced Usage"

@@ -2,7 +2,7 @@ package limedrv
 
 import (
 	"fmt"
-	"github.com/racerxdl/limedrv/limewrap"
+	"github.com/myriadrf/limedrv/limewrap"
 	"os"
 	"runtime"
 	"strings"
