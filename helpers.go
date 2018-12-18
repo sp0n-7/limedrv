@@ -2,10 +2,9 @@ package limedrv
 
 import "C"
 import (
-	"bytes"
-	"encoding/binary"
 	"fmt"
 	"github.com/myriadrf/limedrv/limewrap"
+	"github.com/racerxdl/fastconvert"
 	"runtime"
 	"strings"
 	"unsafe"
@@ -22,7 +21,6 @@ type channelMessage struct {
 }
 
 func streamLoop(c chan<- channelMessage, con chan bool, channel LMSChannel) {
-	var err error
 	//fmt.Fprintf(os.Stderr,"Worker Started")
 	running := true
 	sampleLength := 4
@@ -49,7 +47,6 @@ func streamLoop(c chan<- channelMessage, con chan bool, channel LMSChannel) {
 		recvSamples := limewrap.LMS_RecvStream(channel.stream, zeroPointer, 16384, m, 100)
 		if recvSamples > 0 {
 			chunk := buff[:sampleLength*recvSamples*2]
-			rbuf := bytes.NewReader(chunk)
 			cm := channelMessage{
 				channel:   channel.parentIndex,
 				data:      make([]complex64, recvSamples),
@@ -58,19 +55,11 @@ func streamLoop(c chan<- channelMessage, con chan bool, channel LMSChannel) {
 
 			if sampleLength == 4 {
 				// Float32
-				v := make([]float32, recvSamples)
-				err = binary.Read(rbuf, binary.LittleEndian, &v)
-				if err != nil {
-					panic(err)
-				}
-				for i := 0; i < recvSamples; i++ {
-					cm.data[i] = complex(v[i*2], v[i*2+1])
-				}
+				cm.data = fastconvert.ByteArrayToComplex64Array(chunk)
 			} else {
 				// Int16
 				//var i16a, i16b int16
-				var i16buff = make([]int16, recvSamples*2)
-				err = binary.Read(rbuf, binary.LittleEndian, &i16buff)
+				var i16buff = fastconvert.ByteArrayToInt16LEArray(chunk)
 				for i := 0; i < recvSamples; i++ {
 					cm.data[i] = complex(float32(i16buff[i*2])/32768, float32(i16buff[i*2+1])/32768)
 				}
