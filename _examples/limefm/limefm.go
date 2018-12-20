@@ -30,33 +30,32 @@ func OnSamples(data []complex64, _ int, _ uint64) {
 	if demodDataI != nil {
 		demodData := demodDataI.(demodcore.DemodData)
 		if output != nil {
-			binary.Write(output, binary.LittleEndian, demodData.Data)
+			_ = binary.Write(output, binary.LittleEndian, demodData.Data)
 		}
 	}
 }
 
 func main() {
-
 	flag.Parse()
 
 	demod = demodcore.MakeWBFMDemodulator(sampleRate, 120e3, uint32(*outputRate))
 
 	devices := limedrv.GetDevices()
 
-	fmt.Fprintf(os.Stderr,"Found %d devices.\n", len(devices))
+	_, _ = fmt.Fprintf(os.Stderr,"Found %d devices.\n", len(devices))
 
 	if len(devices) == 0 {
-		fmt.Fprintf(os.Stderr,"No devices found.\n")
+		_, _ = fmt.Fprintf(os.Stderr,"No devices found.\n")
 		os.Exit(1)
 	}
 
 	if len(devices) > 1 {
-		fmt.Fprintf(os.Stderr,"More than one device found. Selecting first one.\n")
+		_, _ = fmt.Fprintf(os.Stderr,"More than one device found. Selecting first one.\n")
 	}
 
 	var di = devices[0]
 
-	fmt.Fprintf(os.Stderr,"Opening device %s\n", di.DeviceName)
+	_, _ = fmt.Fprintf(os.Stderr,"Opening device %s\n", di.DeviceName)
 
 	var d = limedrv.Open(di)
 

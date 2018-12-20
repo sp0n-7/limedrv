@@ -1,4 +1,5 @@
 /* limewrap.i */
+%feature("autodoc", "0");
 %module limewrap
 %{
 #include <lime/LimeSuite.h>

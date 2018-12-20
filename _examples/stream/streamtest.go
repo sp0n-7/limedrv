@@ -7,12 +7,13 @@ import (
 	"time"
 )
 
-
 func OnSamples(data []complex64, channel int, timestamp uint64) {
 	log.Println("Received samples from channel", channel, "with timestamp", timestamp)
 }
 
 func main() {
+	//profiler := profile.Start()
+	//defer profiler.Stop()
 	devices := limedrv.GetDevices()
 
 	log.Printf("Found %d devices.\n", len(devices))
@@ -42,18 +43,18 @@ func main() {
 
 	var ch = d.RXChannels[limedrv.ChannelA]
 
-	ch.Enable()
-	ch.SetAntennaByName("LNAW")
-	ch.SetGainNormalized(0.5)
-	ch.SetLPF(1e6)
-	ch.EnableLPF()
-	ch.SetCenterFrequency(106.3e6)
+	ch.Enable().
+		SetAntennaByName("LNAW").
+		SetGainNormalized(0.5).
+		SetLPF(1e6).
+		EnableLPF().
+		SetCenterFrequency(106.3e6)
 
 	d.SetCallback(OnSamples)
 
 	d.Start()
 
-	time.Sleep(500 * time.Millisecond)
+	time.Sleep(5 * 1000 * time.Millisecond)
 
 	d.Stop()
 

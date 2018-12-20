@@ -28,7 +28,7 @@ func streamLoop(c chan<- channelMessage, con chan bool, channel LMSChannel) {
 		sampleLength = 2
 	}
 	buff := make([]byte, fifoSize*sampleLength*2) // 16k IQ samples
-	zeroPointer := uintptr(unsafe.Pointer(&buff[0]))
+	buffPtr := uintptr(unsafe.Pointer(&buff[0]))
 
 	m := limewrap.NewLms_stream_meta_t()
 	m.SetTimestamp(0)
@@ -43,8 +43,9 @@ func streamLoop(c chan<- channelMessage, con chan bool, channel LMSChannel) {
 			return
 		default:
 		}
-
-		recvSamples := limewrap.LMS_RecvStream(channel.stream, zeroPointer, 16384, m, 100)
+		runtime.LockOSThread()
+		recvSamples := limewrap.LMS_RecvStream(channel.stream, buffPtr, 16384, m, 100)
+		runtime.UnlockOSThread()
 		if recvSamples > 0 {
 			chunk := buff[:sampleLength*recvSamples*2]
 			cm := channelMessage{
