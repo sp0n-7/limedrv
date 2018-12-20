@@ -27,7 +27,7 @@ type channelMessage struct {
 
 func FastI16BufferIQConvert(data []byte) []complex64 {
 	var i16samples = len(data) / 2
-	var out = make([]complex64, i16samples / 2) // Each complex is 2 i16
+	var out = make([]complex64, i16samples/2) // Each complex is 2 i16
 	var pos = 0
 	var itemsToRead = i16samples / 2
 

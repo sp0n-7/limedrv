@@ -536,7 +536,7 @@ func (d *LMSDevice) SetCenterFrequency(channelNumber int, isRX bool, centerFrequ
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 	if limewrap.LMS_SetLOFrequency(d.dev, !isRX, int64(channelNumber), centerFrequency) != 0 {
-		panic(fmt.Sprintf("Failed to set Frequency in %s at %s: %s", d.DeviceInfo.DeviceName, d.DeviceInfo.Media, limewrap.LMS_GetLastErrorMessage()))
+		panic(fmt.Sprintf("Failed to set Frequency to %f in %s at %s: %s", centerFrequency, d.DeviceInfo.DeviceName, d.DeviceInfo.Media, limewrap.LMS_GetLastErrorMessage()))
 	}
 }
 

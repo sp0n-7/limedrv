@@ -22,3 +22,5 @@ It will generate a `limefm` executable in the folder. It outputs the raw Float32
 ```bash
 ./limefm -antenna LNAL -centerFrequency 106300000 -channel 0 -gain 0.5 -outputRate 48000 | ffplay -f f32le -ar 48k -ac 1 -
 ```
+
+There is also a FFT Generator in `fftaverage` folder. The parameters need to be set in the code, but it does generate a nice JPEG with the FFT.
