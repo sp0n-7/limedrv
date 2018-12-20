@@ -2,6 +2,7 @@ package limedrv
 
 import "C"
 import (
+	"encoding/binary"
 	"fmt"
 	"github.com/myriadrf/limedrv/limewrap"
 	"github.com/racerxdl/fastconvert"
@@ -9,6 +10,10 @@ import (
 	"strings"
 	"unsafe"
 )
+
+const floatSize = 4
+const int16Size = 2
+const samplesWait = 100
 
 func cleanString(s string) string {
 	return strings.Trim(s, "\u0000 ")
@@ -20,12 +25,28 @@ type channelMessage struct {
 	timestamp uint64
 }
 
+func FastI16BufferIQConvert(data []byte) []complex64 {
+	var i16samples = len(data) / 2
+	var out = make([]complex64, i16samples / 2) // Each complex is 2 i16
+	var pos = 0
+	var itemsToRead = i16samples / 2
+
+	for idx := 0; idx < itemsToRead; idx++ {
+		var r = int16(binary.LittleEndian.Uint16(data[pos : pos+2]))
+		var i = int16(binary.LittleEndian.Uint16(data[pos+2 : pos+4]))
+		out[idx] = complex(float32(r)/32768, float32(i)/32768)
+		pos += 4
+	}
+
+	return out
+}
+
 func streamLoop(c chan<- channelMessage, con chan bool, channel LMSChannel) {
 	//fmt.Fprintf(os.Stderr,"Worker Started")
 	running := true
-	sampleLength := 4
+	sampleLength := floatSize
 	if channel.parent.IQFormat == FormatInt16 || channel.parent.IQFormat == FormatInt12 {
-		sampleLength = 2
+		sampleLength = int16Size
 	}
 	buff := make([]byte, fifoSize*sampleLength*2) // 16k IQ samples
 	buffPtr := uintptr(unsafe.Pointer(&buff[0]))
@@ -44,26 +65,21 @@ func streamLoop(c chan<- channelMessage, con chan bool, channel LMSChannel) {
 		default:
 		}
 		runtime.LockOSThread()
-		recvSamples := limewrap.LMS_RecvStream(channel.stream, buffPtr, 16384, m, 100)
+		recvSamples := limewrap.LMS_RecvStream(channel.stream, buffPtr, fifoSize, m, samplesWait)
 		runtime.UnlockOSThread()
 		if recvSamples > 0 {
 			chunk := buff[:sampleLength*recvSamples*2]
 			cm := channelMessage{
 				channel:   channel.parentIndex,
-				data:      make([]complex64, recvSamples),
 				timestamp: m.GetTimestamp(),
 			}
 
-			if sampleLength == 4 {
+			if sampleLength == floatSize {
 				// Float32
 				cm.data = fastconvert.ByteArrayToComplex64Array(chunk)
 			} else {
 				// Int16
-				//var i16a, i16b int16
-				var i16buff = fastconvert.ByteArrayToInt16LEArray(chunk)
-				for i := 0; i < recvSamples; i++ {
-					cm.data[i] = complex(float32(i16buff[i*2])/32768, float32(i16buff[i*2+1])/32768)
-				}
+				cm.data = FastI16BufferIQConvert(chunk)
 			}
 
 			c <- cm
