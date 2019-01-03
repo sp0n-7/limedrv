@@ -8,7 +8,6 @@ LimeSuite Wrapper on Go (Driver for LimeSDR Devices)
 So far I need to do all the comments for the methods (since go auto-generates the documentation).
 But while I do that, you can check the examples. The documentation is available at: [https://godoc.org/github.com/myriadrf/limedrv](https://godoc.org/github.com/myriadrf/limedrv)
 
-
 # Examples
 
 So far there is a functional WBFM Radio that uses SegDSP for demodulating. You can check it at `_examples/limefm`. To compile, just go to the folder and run:
@@ -24,3 +23,32 @@ It will generate a `limefm` executable in the folder. It outputs the raw Float32
 ```
 
 There is also a FFT Generator in `fftaverage` folder. The parameters need to be set in the code, but it does generate a nice JPEG with the FFT.
+
+
+# Static Linking
+
+Since `libLimeSuite` doesn't generate static libraries by default (see https://github.com/myriadrf/LimeSuite/issues/241), you should manually compile it to provide the `libLimeSuite.a` thats needed for static linking.
+
+
+You can just do the normal LimeSuite build with `-DBUILD_SHARED_LIBS=OFF` to statically build LimeSuite (that does not break current dynamic linked stuff)
+
+```bash
+# Assumes in libLimeSuite folder
+cmake .. -DBUILD_SHARED_LIBS=OFF
+make -j8
+sudo make install
+```
+
+Then you can change the `limewrap.go` line with the linking definition from:
+
+```go
+#cgo LDFLAGS: -lLimeSuite
+```
+
+to
+
+```go
+#cgo LDFLAGS: -l:libLimeSuite.a -l:libstdc++.a -lm -lusb-1.0
+```
+
+And then compile normally your application. The libLimeSuite should be embedded inside your executable.
