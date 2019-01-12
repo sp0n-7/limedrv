@@ -41,7 +41,77 @@ func FastI16BufferIQConvert(data []byte) []complex64 {
 	return out
 }
 
-func streamLoop(c chan<- channelMessage, con chan bool, channel LMSChannel) {
+func ConvertC64toI16(dst []int16, src []complex64) {
+	samples := len(src)
+	if len(dst)/2 < samples {
+		samples = len(dst) / 2
+	}
+
+	for idx := 0; idx < samples; idx++ {
+		c := src[idx]
+		dst[idx*2+0] = int16(real(c) * 32768)
+		dst[idx*2+1] = int16(imag(c) * 32768)
+	}
+}
+
+func streamTXLoop(con chan bool, channel LMSChannel, txCb func([]complex64, int)) {
+	//fmt.Fprintf(os.Stderr,"Worker Started")
+	running := true
+	sampleLength := floatSize
+	if channel.parent.IQFormat == FormatInt16 || channel.parent.IQFormat == FormatInt12 {
+		sampleLength = int16Size
+	}
+
+	var buffPtr uintptr
+	var buff interface{}
+
+	if sampleLength == int16Size {
+		i16buff := make([]int16, fifoSize*2)
+		buff = i16buff
+		buffPtr = uintptr(unsafe.Pointer(&i16buff[0]))
+	} else {
+		c64buff := make([]complex64, fifoSize)
+		buff = c64buff
+		buffPtr = uintptr(unsafe.Pointer(&c64buff[0]))
+	}
+
+	rxData := make([]complex64, fifoSize)
+
+	m := limewrap.NewLms_stream_meta_t()
+	m.SetTimestamp(0)
+	m.SetFlushPartialPacket(false)
+	m.SetWaitForTimestamp(false)
+	//fmt.Fprintf(os.Stderr,"Worker Running")
+	for running {
+		select {
+		case _ = <-con:
+			//fmt.Fprintf(os.Stderr,"Worker Received stop", b)
+			running = false
+			return
+		default:
+		}
+		if txCb != nil {
+			txCb(rxData, channel.parentIndex) // Fill buffer
+		}
+
+		if sampleLength == floatSize {
+			copy(buff.([]complex64), rxData)
+		} else {
+			ConvertC64toI16(buff.([]int16), rxData)
+		}
+
+		runtime.LockOSThread()
+		sentSamples := limewrap.LMS_SendStream(channel.stream, buffPtr, fifoSize, m, samplesWait)
+		runtime.UnlockOSThread()
+
+		if sentSamples != fifoSize {
+			fmt.Printf("Error sending samples. Expected %d sent %d\n", fifoSize, sentSamples)
+		}
+		runtime.Gosched()
+	}
+}
+
+func streamRXLoop(c chan<- channelMessage, con chan bool, channel LMSChannel) {
 	//fmt.Fprintf(os.Stderr,"Worker Started")
 	running := true
 	sampleLength := floatSize

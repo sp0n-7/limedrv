@@ -43,6 +43,7 @@ type LMSDevice struct {
 	controlChan chan bool
 	running     bool
 	callback    func([]complex64, int, uint64)
+	txCallback  func([]complex64, int)
 }
 
 // region Private Methods
@@ -204,14 +205,14 @@ func (d *LMSDevice) deviceLoop() {
 			cachedActiveChannels = append(cachedActiveChannels, *ch)
 		}
 	}
-	// TODO: TX
-	//for i := 0; i < len(d.TXChannels); i++ {
-	//	var ch = d.TXChannels[i]
-	//	if ch.stream != nil {
-	//		cachedActiveChannels = append(cachedActiveChannels, ch)
-	//		ch.start()
-	//	}
-	//}
+
+	for i := 0; i < len(d.TXChannels); i++ {
+		var ch = d.TXChannels[i]
+		if ch.stream != nil {
+			cachedActiveChannels = append(cachedActiveChannels, *ch)
+			ch.start()
+		}
+	}
 
 	streamControl := make([]chan bool, len(cachedActiveChannels))
 
@@ -219,7 +220,11 @@ func (d *LMSDevice) deviceLoop() {
 		streamControl[i] = make(chan bool)
 		ch := cachedActiveChannels[i]
 		ch.start()
-		go streamLoop(lmsDataChannel, streamControl[i], ch)
+		if ch.IsRX {
+			go streamRXLoop(lmsDataChannel, streamControl[i], ch)
+		} else {
+			go streamTXLoop(streamControl[i], ch, d.txCallback)
+		}
 	}
 
 	// Notify Main thread that we're done caching
@@ -254,6 +259,11 @@ func (d *LMSDevice) deviceLoop() {
 // SetCallback sets the callback for samples.
 func (d *LMSDevice) SetCallback(cb func([]complex64, int, uint64)) {
 	d.callback = cb
+}
+
+// SetTXCallback sets the callback to be called when any TX Channel needs samples
+func (d *LMSDevice) SetTXCallback(cb func([]complex64, int)) {
+	d.txCallback = cb
 }
 
 // SetGainDB Sets the gain of the channel to specified value in dB
@@ -483,7 +493,7 @@ func (d *LMSDevice) Start() {
 		<-d.controlChan
 		//log.Println("Device started")
 	} else {
-		fmt.Fprintf(os.Stderr, "Device already running")
+		_, _ = fmt.Fprintf(os.Stderr, "Device already running")
 	}
 }
 
@@ -495,7 +505,7 @@ func (d *LMSDevice) Stop() {
 		//log.Println("Waiting loop to stop")
 		<-d.controlChan
 	} else {
-		fmt.Fprintf(os.Stderr, "Device not running")
+		_, _ = fmt.Fprintf(os.Stderr, "Device not running")
 	}
 }
 

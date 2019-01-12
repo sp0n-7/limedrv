@@ -11,6 +11,11 @@ func OnSamples(data []complex64, channel int, timestamp uint64) {
 	log.Println("Received samples from channel", channel, "with timestamp", timestamp)
 }
 
+func NeedSamples(data []complex64, channel int) {
+	log.Printf("Channel %d needs %d samples.", channel, len(data))
+	// TODO: Put something in data
+}
+
 func main() {
 	//profiler := profile.Start()
 	//defer profiler.Stop()
@@ -41,16 +46,25 @@ func main() {
 	//d.SetAntennaByName("LNAW", limedrv.ChannelA, true)
 	//d.SetAntennaByName("LNAW", limedrv.ChannelB, true)
 
-	var ch = d.RXChannels[limedrv.ChannelA]
+	var rxCh = d.RXChannels[limedrv.ChannelA]
+	var txCh = d.TXChannels[limedrv.ChannelA]
 
-	ch.Enable().
-		SetAntennaByName("LNAW").
+	rxCh.Enable().
+		SetAntennaByName(limedrv.LNAW).
 		SetGainNormalized(0.5).
 		SetLPF(1e6).
 		EnableLPF().
 		SetCenterFrequency(106.3e6)
 
+	txCh.Enable().
+		SetAntennaByName(limedrv.BAND1).
+		SetGainNormalized(0.5).
+		SetLPF(1e6).
+		EnableLPF().
+		SetCenterFrequency(120e6)
+
 	d.SetCallback(OnSamples)
+	d.SetTXCallback(NeedSamples)
 
 	d.Start()
 
