@@ -489,9 +489,9 @@ func (d *LMSDevice) Start() {
 	if !d.running {
 		d.running = true
 		go d.deviceLoop()
-		//log.Println("Waiting for device loop be ready")
+		//fmt.Println("Waiting for device loop be ready")
 		<-d.controlChan
-		//log.Println("Device started")
+		//fmt.Println("Device started")
 	} else {
 		_, _ = fmt.Fprintf(os.Stderr, "Device already running")
 	}

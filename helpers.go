@@ -125,11 +125,11 @@ func streamRXLoop(c chan<- channelMessage, con chan bool, channel LMSChannel) {
 	m.SetTimestamp(0)
 	m.SetFlushPartialPacket(false)
 	m.SetWaitForTimestamp(false)
-	//fmt.Fprintf(os.Stderr,"Worker Running")
+	//fmt.Println("Worker Running")
 	for running {
 		select {
 		case _ = <-con:
-			//fmt.Fprintf(os.Stderr,"Worker Received stop", b)
+			//fmt.Println("Worker Received stop")
 			running = false
 			return
 		default:
@@ -137,6 +137,7 @@ func streamRXLoop(c chan<- channelMessage, con chan bool, channel LMSChannel) {
 		runtime.LockOSThread()
 		recvSamples := limewrap.LMS_RecvStream(channel.stream, buffPtr, fifoSize, m, samplesWait)
 		runtime.UnlockOSThread()
+
 		if recvSamples > 0 {
 			chunk := buff[:sampleLength*recvSamples*2]
 			cm := channelMessage{
@@ -158,6 +159,7 @@ func streamRXLoop(c chan<- channelMessage, con chan bool, channel LMSChannel) {
 		}
 		runtime.Gosched()
 	}
+	//fmt.Println("Worker stopped")
 }
 
 func createLms_range_t() limewrap.Lms_range_t {
