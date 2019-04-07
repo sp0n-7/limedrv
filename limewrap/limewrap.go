@@ -112,6 +112,8 @@ extern swig_intgo _wrap_LMS_SUCCESS_get_limewrap_eb4bb104b3fac108(void);
 extern swig_intgo _wrap_LMS_GetDeviceList_limewrap_eb4bb104b3fac108(swig_voidp arg1);
 extern swig_intgo _wrap_LMS_Open_limewrap_eb4bb104b3fac108(swig_voidp arg1, swig_type_1 arg2, uintptr_t arg3);
 extern swig_intgo _wrap_LMS_Close_limewrap_eb4bb104b3fac108(uintptr_t arg1);
+extern swig_intgo _wrap_LMS_Disconnect_limewrap_eb4bb104b3fac108(uintptr_t arg1);
+extern _Bool _wrap_LMS_IsOpen_limewrap_eb4bb104b3fac108(uintptr_t arg1, swig_intgo arg2);
 extern _Bool _wrap_LMS_CH_TX_get_limewrap_eb4bb104b3fac108(void);
 extern _Bool _wrap_LMS_CH_RX_get_limewrap_eb4bb104b3fac108(void);
 extern void _wrap_lms_range_t_min_set_limewrap_eb4bb104b3fac108(uintptr_t arg1, double arg2);
@@ -143,7 +145,6 @@ extern swig_intgo _wrap_LMS_PATH_LNAL_limewrap_eb4bb104b3fac108(void);
 extern swig_intgo _wrap_LMS_PATH_LNAW_limewrap_eb4bb104b3fac108(void);
 extern swig_intgo _wrap_LMS_PATH_TX1_limewrap_eb4bb104b3fac108(void);
 extern swig_intgo _wrap_LMS_PATH_TX2_limewrap_eb4bb104b3fac108(void);
-extern swig_intgo _wrap_LMS_PATH_AUTO_limewrap_eb4bb104b3fac108(void);
 extern swig_intgo _wrap_LMS_GetAntennaList_limewrap_eb4bb104b3fac108(uintptr_t arg1, _Bool arg2, swig_type_7 arg3, swig_voidp arg4);
 extern swig_intgo _wrap_LMS_SetAntenna_limewrap_eb4bb104b3fac108(uintptr_t arg1, _Bool arg2, swig_type_8 arg3, swig_type_9 arg4);
 extern swig_intgo _wrap_LMS_GetAntenna_limewrap_eb4bb104b3fac108(uintptr_t arg1, _Bool arg2, swig_type_10 arg3);
@@ -346,6 +347,21 @@ func LMS_Close(arg1 uintptr) (_swig_ret int) {
 	var swig_r int
 	_swig_i_0 := arg1
 	swig_r = (int)(C._wrap_LMS_Close_limewrap_eb4bb104b3fac108(C.uintptr_t(_swig_i_0)))
+	return swig_r
+}
+
+func LMS_Disconnect(arg1 uintptr) (_swig_ret int) {
+	var swig_r int
+	_swig_i_0 := arg1
+	swig_r = (int)(C._wrap_LMS_Disconnect_limewrap_eb4bb104b3fac108(C.uintptr_t(_swig_i_0)))
+	return swig_r
+}
+
+func LMS_IsOpen(arg1 uintptr, arg2 int) (_swig_ret bool) {
+	var swig_r bool
+	_swig_i_0 := arg1
+	_swig_i_1 := arg2
+	swig_r = (bool)(C._wrap_LMS_IsOpen_limewrap_eb4bb104b3fac108(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1)))
 	return swig_r
 }
 
@@ -611,14 +627,6 @@ func _swig_getLMS_PATH_TX2() (_swig_ret int) {
 }
 
 var LMS_PATH_TX2 int = _swig_getLMS_PATH_TX2()
-
-func _swig_getLMS_PATH_AUTO() (_swig_ret int) {
-	var swig_r int
-	swig_r = (int)(C._wrap_LMS_PATH_AUTO_limewrap_eb4bb104b3fac108())
-	return swig_r
-}
-
-var LMS_PATH_AUTO int = _swig_getLMS_PATH_AUTO()
 
 func LMS_GetAntennaList(arg1 uintptr, arg2 bool, arg3 int64, arg4 *string) (_swig_ret int) {
 	var swig_r int
@@ -1030,9 +1038,6 @@ func LMS_WriteFPGAReg(arg1 uintptr, arg2 uint, arg3 uint16) (_swig_ret int) {
 	swig_r = (int)(C._wrap_LMS_WriteFPGAReg_limewrap_eb4bb104b3fac108(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), C.short(_swig_i_2)))
 	return swig_r
 }
-
-const BOARD_PARAM_DAC int = 0
-const BOARD_PARAM_TEMP int = 1
 
 func LMS_ReadCustomBoardParam(arg1 uintptr, arg2 byte, arg3 *float64, arg4 string) (_swig_ret int) {
 	var swig_r int
