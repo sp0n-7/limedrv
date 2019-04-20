@@ -350,21 +350,6 @@ func LMS_Close(arg1 uintptr) (_swig_ret int) {
 	return swig_r
 }
 
-func LMS_Disconnect(arg1 uintptr) (_swig_ret int) {
-	var swig_r int
-	_swig_i_0 := arg1
-	swig_r = (int)(C._wrap_LMS_Disconnect_limewrap_eb4bb104b3fac108(C.uintptr_t(_swig_i_0)))
-	return swig_r
-}
-
-func LMS_IsOpen(arg1 uintptr, arg2 int) (_swig_ret bool) {
-	var swig_r bool
-	_swig_i_0 := arg1
-	_swig_i_1 := arg2
-	swig_r = (bool)(C._wrap_LMS_IsOpen_limewrap_eb4bb104b3fac108(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1)))
-	return swig_r
-}
-
 func GetLMS_CH_TX() (_swig_ret bool) {
 	var swig_r bool
 	swig_r = (bool)(C._wrap_LMS_CH_TX_get_limewrap_eb4bb104b3fac108())
