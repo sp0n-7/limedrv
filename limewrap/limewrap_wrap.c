@@ -315,35 +315,6 @@ intgo _wrap_LMS_Close_limewrap_eb4bb104b3fac108(lms_device_t *_swig_go_0) {
   return _swig_go_result;
 }
 
-
-intgo _wrap_LMS_Disconnect_limewrap_eb4bb104b3fac108(lms_device_t *_swig_go_0) {
-  lms_device_t *arg1 = (lms_device_t *) 0 ;
-  int result;
-  intgo _swig_go_result;
-  
-  arg1 = *(lms_device_t **)&_swig_go_0; 
-  
-  result = (int)LMS_Disconnect(arg1);
-  _swig_go_result = result; 
-  return _swig_go_result;
-}
-
-
-bool _wrap_LMS_IsOpen_limewrap_eb4bb104b3fac108(lms_device_t *_swig_go_0, intgo _swig_go_1) {
-  lms_device_t *arg1 = (lms_device_t *) 0 ;
-  int arg2 ;
-  bool result;
-  bool _swig_go_result;
-  
-  arg1 = *(lms_device_t **)&_swig_go_0; 
-  arg2 = (int)_swig_go_1; 
-  
-  result = (bool)LMS_IsOpen(arg1,arg2);
-  _swig_go_result = result; 
-  return _swig_go_result;
-}
-
-
 bool _wrap_LMS_CH_TX_get_limewrap_eb4bb104b3fac108() {
   bool result;
   bool _swig_go_result;
