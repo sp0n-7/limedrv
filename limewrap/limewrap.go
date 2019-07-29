@@ -178,7 +178,6 @@ extern swig_intgo _wrap_LMS_GetNCOIndex_limewrap_eb4bb104b3fac108(uintptr_t arg1
 extern swig_intgo _wrap_LMS_SetGFIRCoeff_limewrap_eb4bb104b3fac108(uintptr_t arg1, _Bool arg2, swig_type_34 arg3, swig_intgo arg4, swig_voidp arg5, swig_type_35 arg6);
 extern swig_intgo _wrap_LMS_GetGFIRCoeff_limewrap_eb4bb104b3fac108(uintptr_t arg1, _Bool arg2, swig_type_36 arg3, swig_intgo arg4, swig_voidp arg5);
 extern swig_intgo _wrap_LMS_SetGFIR_limewrap_eb4bb104b3fac108(uintptr_t arg1, _Bool arg2, swig_type_37 arg3, swig_intgo arg4, _Bool arg5);
-extern swig_intgo _wrap_LMS_EnableCalibCache_limewrap_eb4bb104b3fac108(uintptr_t arg1, _Bool arg2);
 extern swig_intgo _wrap_LMS_EnableCache_limewrap_eb4bb104b3fac108(uintptr_t arg1, _Bool arg2);
 extern swig_intgo _wrap_LMS_Reset_limewrap_eb4bb104b3fac108(uintptr_t arg1);
 extern swig_intgo _wrap_LMS_ReadLMSReg_limewrap_eb4bb104b3fac108(uintptr_t arg1, swig_intgo arg2, swig_voidp arg3);
@@ -944,14 +943,6 @@ func LMS_SetGFIR(arg1 uintptr, arg2 bool, arg3 int64, arg4 Lms_gfir_t, arg5 bool
 	_swig_i_3 := arg4
 	_swig_i_4 := arg5
 	swig_r = (int)(C._wrap_LMS_SetGFIR_limewrap_eb4bb104b3fac108(C.uintptr_t(_swig_i_0), C._Bool(_swig_i_1), C.swig_type_37(_swig_i_2), C.swig_intgo(_swig_i_3), C._Bool(_swig_i_4)))
-	return swig_r
-}
-
-func LMS_EnableCalibCache(arg1 uintptr, arg2 bool) (_swig_ret int) {
-	var swig_r int
-	_swig_i_0 := arg1
-	_swig_i_1 := arg2
-	swig_r = (int)(C._wrap_LMS_EnableCalibCache_limewrap_eb4bb104b3fac108(C.uintptr_t(_swig_i_0), C._Bool(_swig_i_1)))
 	return swig_r
 }
 
