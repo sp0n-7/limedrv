@@ -1353,22 +1353,6 @@ intgo _wrap_LMS_SetGFIR_limewrap_eb4bb104b3fac108(lms_device_t *_swig_go_0, bool
   return _swig_go_result;
 }
 
-
-intgo _wrap_LMS_EnableCalibCache_limewrap_eb4bb104b3fac108(lms_device_t *_swig_go_0, bool _swig_go_1) {
-  lms_device_t *arg1 = (lms_device_t *) 0 ;
-  bool arg2 ;
-  int result;
-  intgo _swig_go_result;
-  
-  arg1 = *(lms_device_t **)&_swig_go_0; 
-  arg2 = (bool)_swig_go_1; 
-  
-  result = (int)LMS_EnableCalibCache(arg1,arg2);
-  _swig_go_result = result; 
-  return _swig_go_result;
-}
-
-
 intgo _wrap_LMS_EnableCache_limewrap_eb4bb104b3fac108(lms_device_t *_swig_go_0, bool _swig_go_1) {
   lms_device_t *arg1 = (lms_device_t *) 0 ;
   bool arg2 ;
